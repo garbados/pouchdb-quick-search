@@ -1,8 +1,11 @@
 {
   "name": "pouchdb-quick-search",
-  "version": "1.3.0",
-  "description": "PouchDB Quick Search - persisted full-text search for PouchDB",
-  "main": "lib/index.js",
+  "version": "2.0.0",
+  "description": "PouchDB Quick Search - full-text search for PouchDB",
+  "main": "index.js",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/nolanlawson/pouchdb-quick-search.git"
@@ -11,61 +14,46 @@
     "pouch",
     "pouchdb",
     "plugin",
-    "seed",
     "couch",
-    "couchdb"
+    "couchdb",
+    "fts",
+    "full-text",
+    "search"
   ],
-  "author": "",
+  "authors": [
+    "Nolan Lawson <nolan.lawson@gmail.com>",
+    "Diana Thayer <garbados@gmail.com>"
+  ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/nolanlawson/pouchdb-quick-search/issues"
   },
   "scripts": {
-    "test-node": "istanbul test ./node_modules/mocha/bin/_mocha test/test.js",
-    "test-browser": "./bin/test-browser.js",
-    "jshint": "jshint -c .jshintrc lib test/test.js",
-    "test": "npm run jshint && bash ./bin/run-test.sh",
-    "build": "mkdirp dist && browserify . -p bundle-collapser/plugin -t es3ify -s PouchQuickSearch > dist/pouchdb.quick-search.js && npm run min",
-    "min": "uglifyjs dist/pouchdb.quick-search.js -mc > dist/pouchdb.quick-search.min.js",
-    "dev": "browserify test/test.js > test/test-bundle.js && npm run dev-server",
-    "dev-server": "./bin/dev-server.js",
-    "coverage": "npm test --coverage && istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100"
+    "release": "npm run test && npm run build && npm run build:min",
+    "build": "browserify -o dist/pouchdb.quick-search.js index.js ",
+    "build:min": "uglifyjs -mc -o dist/pouchdb.quick-search.min.js dist/pouchdb.quick-search.js",
+    "test": "npm run test:lint && npm run test:node && npm run test:browser",
+    "test:lint": "standard && dependency-check --unused --no-dev .",
+    "test:node": "mocha",
+    "test:browser": "mochify test.js",
+    "cov": "npm run cov:node && npm run cov:browser && nyc report",
+    "cov:node": "nyc -s npm run test:node",
+    "cov:browser": "nyc -s --no-clean --instrument false mochify --transform [ babelify --ignore [ test ] --plugins [ babel-plugin-istanbul ] ] test.js",
+    "coveralls": "npm run cov && nyc report --reporter=text-lcov > lcov.info"
   },
   "dependencies": {
-    "argsarray": "0.0.1",
-    "es3ify": "^0.1.3",
-    "inherits": "~2.0.1",
-    "json-stable-stringify": "^1.0.1",
-    "lie": "^2.6.0",
-    "lunr": "0.7.1",
-    "md5-jkmyers": "0.0.1",
-    "pouchdb-extend": "^0.1.0",
-    "pouchdb-mapreduce-no-ddocs": "^2.3.2",
-    "pouchdb-promise": "5.4.4",
-    "uniq": "^1.0.1"
+    "lunr": "^2.3.9"
   },
   "devDependencies": {
-    "bluebird": "^1.0.7",
-    "browserify": "^12.0.2",
-    "bundle-collapser": "^1.2.1",
-    "chai": "^3.5.0",
-    "chai-as-promised": "^5.3.0",
-    "http-server": "~0.5.5",
-    "istanbul": "^0.2.7",
-    "jshint": "~2.8.0",
-    "mkdirp": "^0.5.1",
-    "mocha": "^2.4.5",
-    "phantomjs-prebuilt": "^2.1.7",
-    "pouchdb-memory": "^1.1.0",
-    "request": "^2.36.0",
-    "sauce-connect-launcher": "^0.14.0",
-    "selenium-standalone": "^5.1.0",
-    "uglify-js": "^2.4.13",
-    "watchify": "^3.1.0",
-    "wd": "^0.2.21"
-  },
-  "lib": [
-    "lib",
-    "dist"
-  ]
+    "babel-plugin-istanbul": "^6.1.1",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "dependency-check": "^4.1.0",
+    "mocha": "^9.2.2",
+    "mochify": "^9.2.0",
+    "nyc": "^15.1.0",
+    "pouchdb": "^7.3.0",
+    "standard": "^17.0.0",
+    "uglify-js": "^3.15.4"
+  }
 }
